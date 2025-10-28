@@ -10,12 +10,12 @@ export interface TournamentConfig {
 export interface Racer {
   id: string;                   // UUID
   carNumber: number;            // Auto-generated, sequential
-  name: string;                 // Scout name
-  denSixPosse?: string;         // Optional
+  name: string;                 // Racer name
+  team?: string;                // Optional team name
   weight?: number;              // Optional
+  races: number;                // Count of completed races
   points: number;               // Accumulated points (elimination status is inferred)
   withdrawn: boolean;           // Withdrawn from tournament (ineligible for future races)
-  races: number;                // Count of completed races
 }
 
 export interface Race {

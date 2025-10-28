@@ -32,7 +32,7 @@ export function createInitialState(): TournamentState {
 export function addRacer(
   state: TournamentState,
   name: string,
-  denSixPosse?: string,
+  team?: string,
   weight?: number
 ): TournamentState {
   // Calculate next car number (max + 1, or 1 if no racers)
@@ -44,7 +44,7 @@ export function addRacer(
     id: generateId(),
     carNumber,
     name,
-    denSixPosse,
+    team,
     weight,
     points: 0,
     withdrawn: false,
@@ -61,7 +61,7 @@ export function addRacer(
 export function updateRacer(
   state: TournamentState,
   racerId: string,
-  updates: Partial<Pick<Racer, 'name' | 'denSixPosse' | 'weight' | 'withdrawn'>>
+  updates: Partial<Pick<Racer, 'name' | 'team' | 'weight' | 'withdrawn'>>
 ): TournamentState {
   return {
     ...state,

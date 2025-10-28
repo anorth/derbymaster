@@ -146,8 +146,23 @@ export function calculateFinalStandings(state: TournamentState): string[] {
 
 // Get racer standings sorted by points (for display during tournament)
 export function getCurrentStandings(state: TournamentState): Racer[] {
+  const eliminationThreshold = state.config.eliminationThreshold;
+
   return [...state.racers].sort((a, b) => {
-    // Sort by points ascending (lower is better)
+    // Determine elimination/withdrawn status
+    const aEliminated = a.withdrawn || a.points >= eliminationThreshold;
+    const bEliminated = b.withdrawn || b.points >= eliminationThreshold;
+
+    // Active racers always rank before eliminated/withdrawn
+    if (aEliminated !== bEliminated) {
+      return aEliminated ? 1 : -1;
+    }
+
+    // Sort by races completed descending (more races = ahead)
+    if (a.races !== b.races) {
+      return b.races - a.races;
+    }
+    // Then by points ascending (lower is better)
     if (a.points !== b.points) {
       return a.points - b.points;
     }

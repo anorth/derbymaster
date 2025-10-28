@@ -20,8 +20,8 @@ import { completeRace as completeRaceUtil } from '@/lib/standings';
 
 interface TournamentContextType {
   state: TournamentState;
-  addRacer: (name: string, denSixPosse?: string, weight?: number) => void;
-  updateRacer: (racerId: string, updates: { name?: string; denSixPosse?: string; weight?: number; withdrawn?: boolean }) => void;
+  addRacer: (name: string, team?: string, weight?: number) => void;
+  updateRacer: (racerId: string, updates: { name?: string; team?: string; weight?: number; withdrawn?: boolean }) => void;
   deleteRacer: (racerId: string) => void;
   updateConfig: (updates: { laneCount?: number; eliminationThreshold?: number }) => void;
   resetTournament: () => void;
@@ -56,11 +56,11 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     return cleanup;
   }, []);
 
-  const addRacer = (name: string, denSixPosse?: string, weight?: number) => {
-    setState(prev => addRacerUtil(prev, name, denSixPosse, weight));
+  const addRacer = (name: string, team?: string, weight?: number) => {
+    setState(prev => addRacerUtil(prev, name, team, weight));
   };
 
-  const updateRacer = (racerId: string, updates: { name?: string; denSixPosse?: string; weight?: number; withdrawn?: boolean }) => {
+  const updateRacer = (racerId: string, updates: { name?: string; team?: string; weight?: number; withdrawn?: boolean }) => {
     setState(prev => updateRacerUtil(prev, racerId, updates));
   };
 

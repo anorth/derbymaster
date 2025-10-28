@@ -11,11 +11,7 @@ export default function ManagerView() {
   const [activeTab, setActiveTab] = useState<Tab>('configuration');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-blue-600 text-white p-4 shadow-md">
-        <h1 className="text-2xl font-bold">DerbyMaster - Race Manager</h1>
-      </header>
-
+    <div>
       {/* Tab Navigation */}
       <div className="bg-white border-b border-gray-200">
         <nav className="flex">
@@ -53,7 +49,7 @@ export default function ManagerView() {
       </div>
 
       {/* Tab Content */}
-      <main className="p-6">
+      <main className="p-4">
         {activeTab === 'configuration' && <ConfigurationTab />}
         {activeTab === 'registration' && <RegistrationTab />}
         {activeTab === 'execution' && <ExecutionTab />}
