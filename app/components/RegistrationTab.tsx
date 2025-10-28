@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTournament } from '@/app/contexts/TournamentContext';
 import type { Racer } from '@/types';
 
@@ -8,9 +8,10 @@ export function RegistrationTab() {
   const {state, addRacer, updateRacer, deleteRacer} = useTournament();
 
   const [name, setName] = useState('');
-  const [denSixPosse, setDenSixPosse] = useState('');
+  const [team, setTeam] = useState('');
   const [weight, setWeight] = useState('');
   const [editingRacer, setEditingRacer] = useState<Racer | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Check if any races have been run (for delete restriction)
   const hasRacesRun = state.heats.some(h => h.races.some(r => r.completedAt));
@@ -24,7 +25,7 @@ export function RegistrationTab() {
       // Update existing racer
       updateRacer(editingRacer.id, {
         name: name.trim(),
-        denSixPosse: denSixPosse.trim() || undefined,
+        team: team.trim() || undefined,
         weight: weight ? parseFloat(weight) : undefined,
       });
       setEditingRacer(null);
@@ -32,28 +33,31 @@ export function RegistrationTab() {
       // Add new racer
       addRacer(
           name.trim(),
-          denSixPosse.trim() || undefined,
+          team.trim() || undefined,
           weight ? parseFloat(weight) : undefined
       );
     }
 
     // Clear form
     setName('');
-    setDenSixPosse('');
+    setTeam('');
     setWeight('');
+
+    // Focus the name input for quick entry of next racer
+    nameInputRef.current?.focus();
   };
 
   const handleEdit = (racer: Racer) => {
     setEditingRacer(racer);
     setName(racer.name);
-    setDenSixPosse(racer.denSixPosse || '');
+    setTeam(racer.team || '');
     setWeight(racer.weight?.toString() || '');
   };
 
   const handleCancelEdit = () => {
     setEditingRacer(null);
     setName('');
-    setDenSixPosse('');
+    setTeam('');
     setWeight('');
   };
 
@@ -72,7 +76,7 @@ export function RegistrationTab() {
 
   return (
       <div className="max-w-6xl">
-        <h2 className="text-xl font-semibold mb-6">Racer Registration</h2>
+        <h2 className="text-xl font-semibold mb-2">Racer Registration</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Add/Edit Racer Form */}
@@ -84,9 +88,10 @@ export function RegistrationTab() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Scout Name <span className="text-red-500">*</span>
+                  Racer Name <span className="text-red-500">*</span>
                 </label>
                 <input
+                    ref={nameInputRef}
                     id="name"
                     type="text"
                     value={name}
@@ -98,16 +103,16 @@ export function RegistrationTab() {
               </div>
 
               <div>
-                <label htmlFor="den" className="block text-sm font-medium text-gray-700 mb-1">
-                  Den/Six/Posse
+                <label htmlFor="team" className="block text-sm font-medium text-gray-700 mb-1">
+                  Team
                 </label>
                 <input
-                    id="den"
+                    id="team"
                     type="text"
-                    value={denSixPosse}
-                    onChange={(e) => setDenSixPosse(e.target.value)}
+                    value={team}
+                    onChange={(e) => setTeam(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Optional"
+                    placeholder="Den / Six / Posse (Optional)"
                 />
               </div>
 
@@ -177,12 +182,12 @@ export function RegistrationTab() {
                                     className="ml-2 text-xs font-bold text-orange-600">WITHDRAWN</span>}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {racer.denSixPosse && <span>{racer.denSixPosse}</span>}
-                                {racer.denSixPosse && racer.weight && <span> • </span>}
+                                {racer.team && <span>{racer.team}</span>}
+                                {racer.team && racer.weight && <span> • </span>}
                                 {racer.weight && <span>Weight: {racer.weight}</span>}
                                 {racer.races > 0 && (
                                   <>
-                                    {(racer.denSixPosse || racer.weight) && <span> • </span>}
+                                    {(racer.team || racer.weight) && <span> • </span>}
                                     <span>{racer.races} race{racer.races !== 1 ? 's' : ''}, {racer.points} pt{racer.points !== 1 ? 's' : ''}</span>
                                   </>
                                 )}

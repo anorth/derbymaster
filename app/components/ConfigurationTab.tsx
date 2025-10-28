@@ -33,7 +33,7 @@ export function ConfigurationTab() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-xl font-semibold mb-6">Tournament Configuration</h2>
+      <h2 className="text-xl font-semibold mb-2">Tournament Configuration</h2>
 
       <div className="bg-white rounded-lg shadow p-6 space-y-6">
         {/* Lane Count */}
