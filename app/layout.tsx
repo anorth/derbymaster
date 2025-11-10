@@ -3,7 +3,7 @@ import "./globals.css";
 import { TournamentProvider } from "@/app/contexts/TournamentContext";
 
 export const metadata: Metadata = {
-  title: "DerbyMaster",
+  title: "Derby Master",
   description: "Pinewood Derby race management system",
 };
 

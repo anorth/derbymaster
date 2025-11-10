@@ -1,6 +1,6 @@
-# DerbyMaster
+# Derby Master
 
-DerbyMaster is a browser-based Pinewood Derby race management app.
+Derby Master is a browser-based Pinewood Derby race management app.
 It runs completely in a web browser, sharing tournament state across multiple windows for race control and spectator displays.
 All data is stored locally in the browser.
 
