@@ -11,7 +11,10 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-blue-600 text-white p-4 shadow-md">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Derby Master</h1>
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Derby Master Logo" className="h-10 w-10" />
+            <h1 className="text-2xl font-bold">Derby Master</h1>
+          </div>
           <button
             onClick={handleOpenSpectator}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-md transition-colors text-sm font-medium"

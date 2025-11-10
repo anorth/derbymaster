@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="35 55 130 130" width="200" height="200">
+  <!-- Racecar wheel -->
+  <g id="wheel">
+    <!-- Outer tire -->
+    <circle cx="100" cy="120" r="60" fill="#2B2D42" stroke="#1a1b2e" stroke-width="3"/>
+
+    <!-- Inner rim -->
+    <circle cx="100" cy="120" r="45" fill="#8D99AE" stroke="#6B768A" stroke-width="2"/>
+
+    <!-- Spokes (5 spokes) -->
+    <g stroke="#2B2D42" stroke-width="4" stroke-linecap="round">
+      <line x1="100" y1="120" x2="100" y2="75" />
+      <line x1="100" y1="120" x2="142.5" y2="98.5" />
+      <line x1="100" y1="120" x2="127.5" y2="158" />
+      <line x1="100" y1="120" x2="72.5" y2="158" />
+      <line x1="100" y1="120" x2="57.5" y2="98.5" />
+    </g>
+
+    <!-- Center hub -->
+    <circle cx="100" cy="120" r="15" fill="#EDF2F4" stroke="#6B768A" stroke-width="2"/>
+    <circle cx="100" cy="120" r="8" fill="#2B2D42"/>
+  </g>
+
+  <!-- Scout scarf -->
+  <g id="scarf">
+    <!-- Left strand coming from shoulder -->
+    <path d="M 55 75 Q 60 80 88 105" fill="none" stroke="#E63946" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 55 75 Q 60 80 88 105" fill="none" stroke="#C1121F" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Right strand coming from shoulder -->
+    <path d="M 145 75 Q 140 80 112 105" fill="none" stroke="#E63946" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 145 75 Q 140 80 112 105" fill="none" stroke="#C1121F" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Woggle (ring holding the scarf) -->
+    <circle cx="100" cy="108" r="7" fill="none" stroke="#8B7355" stroke-width="4"/>
+    <circle cx="100" cy="108" r="7" fill="none" stroke="#5C4A3A" stroke-width="1.5"/>
+
+    <!-- Left strand dropping down -->
+    <path d="M 96 113 L 94 180" fill="none" stroke="#E63946" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 96 113 L 94 180" fill="none" stroke="#C1121F" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Right strand dropping down -->
+    <path d="M 104 113 L 106 180" fill="none" stroke="#E63946" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 104 113 L 106 180" fill="none" stroke="#C1121F" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+</svg>

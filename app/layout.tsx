@@ -5,6 +5,9 @@ import { TournamentProvider } from "@/app/contexts/TournamentContext";
 export const metadata: Metadata = {
   title: "Derby Master",
   description: "Pinewood Derby race management system",
+  icons: {
+    icon: '/logo.svg',
+  },
 };
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
