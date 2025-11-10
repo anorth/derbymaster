@@ -27,6 +27,13 @@ export default function SpectatorView() {
   const currentHeat = state.heats.find(h => h.heatNumber === state.currentHeatNumber);
   const currentRaces = currentHeat?.races || [];
   const nextRace = currentRaces.find(r => !r.completedAt) || (state.final && !state.final.completedAt ? state.final : null);
+  let nextNextRace = null;
+  if (nextRace && !nextRace.isFinalRace) {
+    const nextRaceIndex = currentRaces.findIndex(r => r.id === nextRace.id);
+    if (nextRaceIndex !== -1 && nextRaceIndex < currentRaces.length - 1) {
+      nextNextRace = currentRaces[nextRaceIndex + 1];
+    }
+  }
 
   // Get standings
   const standings = getCurrentStandings(state);
@@ -102,16 +109,22 @@ export default function SpectatorView() {
         {/* Current Race Callout */}
         {!state.isComplete && (
             <div className="mb-4">
-              <h2 className="text-3xl font-bold text-center mb-4">Next Race</h2>
+              <h2 className="text-3xl font-bold text-center mb-4">
+                <span>Next Race</span>
+                {nextRace && (
+                    <>
+                      &nbsp;&mdash;&nbsp;
+                      <span
+                          className={`${nextRace.isFinalRace ? "text-red-600" : "text-gray-600"}`}>{nextRace.isFinalRace
+                          ? `Final Race (Race #${nextRace.raceNumber})`
+                          : `Heat ${nextRace.heatNumber} (Race #${nextRace.raceNumber})`}
+                      </span>
+                    </>)
+                }
+              </h2>
 
               {nextRace ? (
                   <div className="">
-                    <h3 className={`text-2xl font-bold text-center mb-2 ${nextRace.isFinalRace ? "text-red-600" : "text-gray-600"}`}>
-                      {nextRace.isFinalRace
-                          ? `Final Race - Race #${nextRace.raceNumber}`
-                          : `Heat ${nextRace.heatNumber} - Race #${nextRace.raceNumber}`}
-                    </h3>
-
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {Object.entries(nextRace.laneAssignments)
                           .sort(([a], [b]) => parseInt(a) - parseInt(b))
@@ -135,7 +148,7 @@ export default function SpectatorView() {
                                           {racer.name}
                                         </div>
                                         {racer.team && (
-                                            <div className="text-sm text-gray-600 mt-2">
+                                            <div className="text-sm text-gray-700">
                                               {racer.team}
                                             </div>
                                         )}
@@ -156,8 +169,24 @@ export default function SpectatorView() {
                   <div className="text-center">
                     <p>Waiting...</p>
                   </div>
-              )
-              }
+              )}
+
+              {nextNextRace && (
+                  <div className="mt-4 flex gap-4 justify-center italic">
+                    <div>Next up:</div>
+                    {Object.entries(nextNextRace.laneAssignments)
+                        .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                        .map(([lane, racerId]) => {
+                          const racer = racerId ? state.racers.find(r => r.id === racerId) : null;
+                          return racer && (
+                              <div key={lane}>
+                                <span className="font-bold">#{racer?.carNumber}</span> {racer?.name}
+                              </div>
+                          );
+                        })
+                    }
+                  </div>
+              )}
             </div>
         )}
 
