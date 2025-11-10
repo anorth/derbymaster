@@ -39,11 +39,6 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     return loaded || createInitialState();
   });
 
-  // Save state whenever it changes
-  useEffect(() => {
-    saveTournamentState(state);
-  }, [state]);
-
   // Listen for changes from other windows
   useEffect(() => {
     const cleanup = onTournamentStateChange(() => {
@@ -57,24 +52,43 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addRacer = (name: string, team?: string, weight?: number) => {
-    setState(prev => addRacerUtil(prev, name, team, weight));
+    console.log("Tournament Adding racer: ", name, " (", team, ", ", weight,)
+    setState(prev => {
+      const newState = addRacerUtil(prev, name, team, weight);
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const updateRacer = (racerId: string, updates: { name?: string; team?: string; weight?: number; withdrawn?: boolean }) => {
-    setState(prev => updateRacerUtil(prev, racerId, updates));
+    setState(prev => {
+      const newState = updateRacerUtil(prev, racerId, updates);
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const deleteRacer = (racerId: string) => {
-    setState(prev => deleteRacerUtil(prev, racerId));
+    setState(prev => {
+      const newState = deleteRacerUtil(prev, racerId);
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const updateConfig = (updates: { laneCount?: number; eliminationThreshold?: number }) => {
-    setState(prev => updateConfigUtil(prev, updates));
+    setState(prev => {
+      const newState = updateConfigUtil(prev, updates);
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const resetTournament = () => {
     clearTournamentState();
-    setState(createInitialState());
+    const newState = createInitialState();
+    saveTournamentState(newState);
+    setState(newState);
   };
 
   const generateNextHeat = () => {
@@ -84,34 +98,46 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
         r => r.points < prev.config.eliminationThreshold
       );
 
+      let newState: TournamentState;
       if (activeRacers.length <= prev.config.laneCount && activeRacers.length > 0) {
         // Generate final race
         const finalRace = generateFinalRace(prev);
-        return {
+        newState = {
           ...prev,
           final: finalRace,
         };
+      } else {
+        // Generate regular heat
+        const newHeat = generateHeat(prev);
+        newState = {
+          ...prev,
+          heats: [...prev.heats, newHeat],
+          currentHeatNumber: newHeat.heatNumber,
+        };
       }
 
-      // Generate regular heat
-      const newHeat = generateHeat(prev);
-      return {
-        ...prev,
-        heats: [...prev.heats, newHeat],
-        currentHeatNumber: newHeat.heatNumber,
-      };
+      saveTournamentState(newState);
+      return newState;
     });
   };
 
   const completeRace = (raceId: string, results: { [lane: number]: number }) => {
-    setState(prev => completeRaceUtil(prev, raceId, results));
+    setState(prev => {
+      const newState = completeRaceUtil(prev, raceId, results);
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const updateHeat = (heat: Heat) => {
-    setState(prev => ({
-      ...prev,
-      heats: prev.heats.map(h => h.heatNumber === heat.heatNumber ? heat : h),
-    }));
+    setState(prev => {
+      const newState = {
+        ...prev,
+        heats: prev.heats.map(h => h.heatNumber === heat.heatNumber ? heat : h),
+      };
+      saveTournamentState(newState);
+      return newState;
+    });
   };
 
   const regenerateCurrentHeat = () => {
@@ -130,10 +156,13 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
 
       const newHeat = generateHeat(tempState);
 
-      return {
+      const newState = {
         ...prev,
         heats: [...heatsWithoutCurrent, newHeat],
       };
+
+      saveTournamentState(newState);
+      return newState;
     });
   };
 

@@ -3,26 +3,6 @@ import type { TournamentState } from '@/types';
 const TOURNAMENT_DATA_KEY = 'tournament-data';
 const TOURNAMENT_SEQ_KEY = 'tournament-seq';
 
-// Type guard to check if we're in browser environment
-function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-}
-
-// Get current sequence number
-function getSequence(): number {
-  if (!isBrowser()) return 0;
-  const seq = localStorage.getItem(TOURNAMENT_SEQ_KEY);
-  return seq ? parseInt(seq, 10) : 0;
-}
-
-// Increment and save sequence number
-function incrementSequence(): number {
-  if (!isBrowser()) return 0;
-  const newSeq = getSequence() + 1;
-  localStorage.setItem(TOURNAMENT_SEQ_KEY, newSeq.toString());
-  return newSeq;
-}
-
 // Save tournament state and increment sequence
 export function saveTournamentState(state: TournamentState): void {
   if (!isBrowser()) return;
@@ -36,7 +16,8 @@ export function saveTournamentState(state: TournamentState): void {
   });
 
   localStorage.setItem(TOURNAMENT_DATA_KEY, serializedState);
-  incrementSequence();
+  const seq = incrementSequence();
+  console.log('Saved tournament state', seq);
 }
 
 // Load tournament state
@@ -45,6 +26,7 @@ export function loadTournamentState(): TournamentState | null {
 
   const data = localStorage.getItem(TOURNAMENT_DATA_KEY);
   if (!data) return null;
+  console.log('Loaded tournament state');
 
   try {
     const parsed = JSON.parse(data);
@@ -76,6 +58,7 @@ export function loadTournamentState(): TournamentState | null {
 export function clearTournamentState(): void {
   if (!isBrowser()) return;
   localStorage.removeItem(TOURNAMENT_DATA_KEY);
+  localStorage.removeItem(TOURNAMENT_SEQ_KEY);
   incrementSequence();
 }
 
@@ -102,4 +85,24 @@ export function onTournamentStateChange(callback: () => void): () => void {
   return () => {
     window.removeEventListener('storage', handleStorageEvent);
   };
+}
+
+// Type guard to check if we're in browser environment
+function isBrowser(): boolean {
+  return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+}
+
+// Get current sequence number
+function getSequence(): number {
+  if (!isBrowser()) return 0;
+  const seq = localStorage.getItem(TOURNAMENT_SEQ_KEY);
+  return seq ? parseInt(seq, 10) : 0;
+}
+
+// Increment and save sequence number
+function incrementSequence(): number {
+  if (!isBrowser()) return 0;
+  const newSeq = getSequence() + 1;
+  localStorage.setItem(TOURNAMENT_SEQ_KEY, newSeq.toString());
+  return newSeq;
 }

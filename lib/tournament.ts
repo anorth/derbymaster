@@ -9,7 +9,7 @@ export function generateId(): string {
 export function createInitialConfig(): TournamentConfig {
   return {
     laneCount: 4,
-    eliminationThreshold: 5,
+    eliminationThreshold: 6,
     raceFormat: 'ladderless',
     createdAt: new Date(),
   };
@@ -40,6 +40,8 @@ export function addRacer(
     ? Math.max(...state.racers.map(r => r.carNumber)) + 1
     : 1;
 
+  console.log("addRacer, racers", state.racers.length, "next", carNumber)
+
   const newRacer: Racer = {
     id: generateId(),
     carNumber,
@@ -50,6 +52,7 @@ export function addRacer(
     withdrawn: false,
     races: 0,
   };
+  console.log("addRacer, newRacer", newRacer)
 
   return {
     ...state,

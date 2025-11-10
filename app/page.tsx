@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import ManagerView from '@/app/components/ManagerView';
-import SpectatorView from '@/app/components/SpectatorView';
-
-type View = 'manager' | 'spectator';
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState<View>('manager');
+  const handleOpenSpectator = () => {
+    window.open('/spectator', '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -15,16 +13,16 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">DerbyMaster</h1>
           <button
-            onClick={() => setCurrentView(currentView === 'manager' ? 'spectator' : 'manager')}
+            onClick={handleOpenSpectator}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-md transition-colors text-sm font-medium"
           >
-            {currentView === 'manager' ? 'Spectator View' : 'Manager View'}
+            Open Spectator View
           </button>
         </div>
       </header>
 
       <main>
-        {currentView === 'manager' ? <ManagerView /> : <SpectatorView />}
+        <ManagerView />
       </main>
     </div>
   );

@@ -31,6 +31,7 @@ export function RegistrationTab() {
       setEditingRacer(null);
     } else {
       // Add new racer
+      console.log("Registration: Adding racer: ", name, " (", team, ", ", weight,)
       addRacer(
           name.trim(),
           team.trim() || undefined,
