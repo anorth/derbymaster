@@ -22,6 +22,7 @@ export interface Race {
   id: string;                   // UUID
   heatNumber: number;           // Which round of heats this belongs to
   raceNumber: number;           // Global race number
+  isFinalRace: boolean;
   laneAssignments: {            // Lane number → racer ID
     [lane: number]: string | null;
   };
@@ -46,7 +47,6 @@ export interface TournamentState {
   currentHeatNumber: number;
   currentRaceNumber: number;
   isComplete: boolean;
-  finalStandings?: string[];    // Racer IDs in placement order
 }
 
 // Helper type for tracking lane usage by racer

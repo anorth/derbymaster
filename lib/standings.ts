@@ -102,53 +102,40 @@ export function completeRace(
   // Check if this was the final race
   if (state.final?.id === raceId) {
     updatedState.isComplete = true;
-    updatedState.finalStandings = calculateFinalStandings(updatedState);
   }
 
   return updatedState;
 }
 
-// Calculate final standings when tournament is complete
-export function calculateFinalStandings(state: TournamentState): string[] {
-  if (!state.final?.results) {
-    throw new Error('Cannot calculate final standings without final race results');
-  }
-
-  const finalRace = state.final;
-
-  // Get placements from final race (lane -> placement)
-  const finalPlacements: { racerId: string; placement: number }[] = [];
-
-  Object.entries(finalRace.laneAssignments).forEach(([lane, racerId]) => {
-    if (racerId) {
-      const placement = finalRace.results![parseInt(lane)];
-      if (placement !== undefined) {
-        finalPlacements.push({ racerId, placement });
-      }
-    }
-  });
-
-  // Sort by placement
-  finalPlacements.sort((a, b) => a.placement - b.placement);
-
-  // Remaining racers (eliminated) sorted by points (ascending = better)
-  const finalistsIds = new Set(finalPlacements.map(fp => fp.racerId));
-  const eliminatedRacers = state.racers
-    .filter(r => !finalistsIds.has(r.id))
-    .sort((a, b) => a.points - b.points);
-
-  // Combine: finalists first, then eliminated
-  return [
-    ...finalPlacements.map(fp => fp.racerId),
-    ...eliminatedRacers.map(r => r.id),
-  ];
-}
-
 // Get racer standings sorted by points (for display during tournament)
 export function getCurrentStandings(state: TournamentState): Racer[] {
-  const eliminationThreshold = state.config.eliminationThreshold;
+  // If the tournament is finalized, use final race placement for the finalists.
+  const finalPlacements: { racerId: string; placement: number }[] = [];
+  const finalistsIds = new Set(finalPlacements.map(fp => fp.racerId));
 
-  return [...state.racers].sort((a, b) => {
+  const finalRace = state.final;
+  if (finalRace && finalRace.completedAt) {
+    Object.entries(finalRace.laneAssignments).forEach(([lane, racerId]) => {
+      if (racerId) {
+        const placement = finalRace.results![parseInt(lane)];
+        if (placement !== undefined) {
+          finalPlacements.push({ racerId, placement });
+        }
+        finalistsIds.add(racerId);
+      }
+    });
+
+    // Sort by placement
+    finalPlacements.sort((a, b) => a.placement - b.placement);
+  }
+
+  const finalists = finalPlacements.map(fp => state.racers.find(r => r.id === fp.racerId)!);
+
+  // Remaining racers (eliminated) sorted by races then points (ascending = better)
+  const remainingRacers = state.racers.filter(r => !finalistsIds.has(r.id));
+  const eliminationThreshold = state.config.eliminationThreshold;
+  const remainder = [...remainingRacers]
+  remainder.sort((a, b) => {
     // Determine elimination/withdrawn status
     const aEliminated = a.withdrawn || a.points >= eliminationThreshold;
     const bEliminated = b.withdrawn || b.points >= eliminationThreshold;
@@ -169,6 +156,8 @@ export function getCurrentStandings(state: TournamentState): Racer[] {
     // Tie-breaker: car number
     return a.carNumber - b.carNumber;
   });
+
+  return [...finalists, ...remainder]
 }
 
 // Get racer history (all races they participated in)

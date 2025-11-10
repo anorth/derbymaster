@@ -134,6 +134,7 @@ export function generateHeat(state: TournamentState): Heat {
     races.push({
       id: generateId(),
       heatNumber: nextHeatNumber,
+      isFinalRace: false,
       raceNumber: state.currentRaceNumber + index + 1,
       laneAssignments,
     });
@@ -167,6 +168,7 @@ export function generateFinalRace(state: TournamentState): Race {
     id: generateId(),
     heatNumber: 0, // Final race is not part of a heat
     raceNumber: state.currentRaceNumber + 1,
+    isFinalRace: true,
     laneAssignments,
   };
 }

@@ -12,7 +12,7 @@ export function ExecutionTab() {
 
   // Get current race
   const currentHeat = state.heats.find(h => h.heatNumber === state.currentHeatNumber);
-  const currentRace = currentHeat?.races.find(r => !r.completedAt) || state.final;
+  const currentRace = state.isComplete ? null : currentHeat?.races.find(r => !r.completedAt) || state.final;
 
   // Get standings
   const standings = getCurrentStandings(state);
@@ -27,8 +27,7 @@ export function ExecutionTab() {
   };
 
   // Check if can generate next heat
-  const canGenerateHeat = state.racers.length >= state.config.laneCount &&
-    (!currentHeat || currentHeat.isComplete) &&
+  const canGenerateHeat = (!currentHeat || currentHeat.isComplete) &&
     !state.final &&
     !state.isComplete;
 
@@ -107,11 +106,17 @@ export function ExecutionTab() {
         {/* Left Column: Current Race */}
         <div className="space-y-6">
           {/* Current Heat/Race Display */}
-          {currentRace ? (
+          {state.isComplete ? (
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="text-lg font-semibold text-center">
+                  Tournament complete
+                </div>
+              </div>
+          ) : currentRace ? (
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">
-                  {currentRace.heatNumber === 0
+                <h3 className={`text-lg font-semibold ${currentRace.isFinalRace ? 'underline text-red-600' : 'text-gray-800'}`}>
+                  {currentRace.isFinalRace
                     ? `Final Race - Race #${currentRace.raceNumber}`
                     : `Heat ${currentRace.heatNumber} - Race #${currentRace.raceNumber}`}
                 </h3>
@@ -198,19 +203,19 @@ export function ExecutionTab() {
               <p className="text-gray-600 mb-4">
                 {state.currentHeatNumber === 0
                   ? 'Ready to generate the first round of heats.'
-                  : 'Round complete. Generate a new round of heats to continue.'}
+                  : `Round ${state.currentHeatNumber} complete. Generate a new round to continue.`}
               </p>
               <button
                 onClick={handleGenerateHeat}
                 className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
               >
-                Generate Next Heats
+                Generate Next Round
               </button>
             </div>
           ) : (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
               <p className="text-gray-500">
-                Need at least {state.config.laneCount} racers to start the tournament.
+                No races ready.
               </p>
             </div>
           )}

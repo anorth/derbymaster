@@ -1,12 +1,26 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTournament } from '@/app/contexts/TournamentContext';
 import { getCurrentStandings } from '@/lib/standings';
 import { isEliminated } from '@/lib/tournament';
-import type { Race } from '@/types';
 
 export default function SpectatorView() {
   const { state } = useTournament();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
 
   // Get current heat and races
   const currentHeat = state.heats.find(h => h.heatNumber === state.currentHeatNumber);
@@ -46,7 +60,7 @@ export default function SpectatorView() {
 
         // Find which lane this racer was in
         const lane = Object.entries(race.laneAssignments).find(
-          ([_, id]) => id === racerId
+          ([_lane, id]) => id === racerId
         )?.[0];
 
         if (lane && race.results[parseInt(lane)] !== undefined) {
@@ -58,7 +72,7 @@ export default function SpectatorView() {
     // Check final race
     if (state.final?.completedAt && state.final.results) {
       const lane = Object.entries(state.final.laneAssignments).find(
-        ([_, id]) => id === racerId
+        ([_lane, id]) => id === racerId
       )?.[0];
 
       if (lane && state.final.results[parseInt(lane)] !== undefined) {
@@ -99,8 +113,8 @@ export default function SpectatorView() {
 
           {nextRace ? (
           <div className="">
-            <h3 className="text-2xl font-bold text-center mb-2 text-gray-600">
-              {nextRace.heatNumber === 0
+            <h3 className={`text-2xl font-bold text-center mb-2 ${nextRace.isFinalRace ? "text-red-600" : "text-gray-600"}`}>
+              {nextRace.isFinalRace
                 ? `Final Race - Race #${nextRace.raceNumber}`
                 : `Heat ${nextRace.heatNumber} - Race #${nextRace.raceNumber}`}
             </h3>
@@ -121,7 +135,7 @@ export default function SpectatorView() {
                       </div>
                       {racer ? (
                         <>
-                          <div className="text-2xl font-bold text-gray-800 mb-1">
+                          <div className="text-3xl font-bold text-gray-800 mb-1">
                             #{racer.carNumber}
                           </div>
                           <div className="text-lg font-semibold text-gray-700">
@@ -258,7 +272,7 @@ export default function SpectatorView() {
                             history.map((placement, idx) => (
                               <span
                                 key={idx}
-                                className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                                className={`inline-block w-9 px-2 py-1 rounded text-xs font-semibold ${
                                   placement === 1
                                     ? 'bg-yellow-200 text-yellow-800'
                                     : placement === 2
