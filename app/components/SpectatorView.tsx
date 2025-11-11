@@ -141,10 +141,10 @@ export default function SpectatorView() {
                                   </div>
                                   {racer ? (
                                       <>
-                                        <div className="text-3xl font-bold text-gray-800 mb-1">
+                                        <div className="text-6xl font-bold text-gray-800 mb-1">
                                           #{racer.carNumber}
                                         </div>
-                                        <div className="text-lg font-semibold text-gray-700">
+                                        <div className="text-xl font-semibold text-gray-700 truncate">
                                           {racer.name}
                                         </div>
                                         {racer.team && (
